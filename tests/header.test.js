@@ -13,53 +13,38 @@ afterEach(async () => {
   await browser.close();
 });
 
-// test('We can launch a browser (a puppeteer chromium instance)', async () => {
-test('Our header contains our brand name', async () => {
+test('The header contains the correct text (our brand name).', async () => {
   const text = await page.$eval('a.brand-logo', el => el.innerHTML);
 
   expect(text).toEqual('Blogster');
 });
 
+test('Clicking login starts the google oAuth flow.', async () => {
+  await page.click('.right a');
+  const url = await page.url();
 
+  expect(url).toMatch(/accounts\.google\.com/);
+});
 
+test('When a user is signed in, the logout button is displayed', async () => {
+  const userId = '5b81a886a2222003deb86cf0';  // user _id as defined in mlab users table
 
+  const Buffer = require('safe-buffer').Buffer;
+  const sessionObject = {
+    passport: {
+      user: userId
+    }
+  };
+  const sessionString = Buffer.from(
+    JSON.stringify(sessionObject)
+  ).toString('base64');
 
-// // sample test via jest
-// test('Adds two numbers', () => {
-//   const sum = 1 + 2;
-//   // expect == assert
-//   expect(sum).toEqual(3);
-// });
+  const Keygrip = require('keygrip');
+  const keys = require('../config/keys');
+  const keygrip = new Keygrip([keys.cookieKey]);
+  const sig = keygrip.sign('session=' + sessionString);
 
-
-
-// Test Flow:
-/*
-    ------------------------
-    |    Launch Chromium    |<----|
-    ------------------------      |
-               ||                 |
-               \/                 |
-    ------------------------      |
-    |    Navigate to app    |     |
-    ------------------------      |
-               ||                 |
-               \/                 |
-    ------------------------      |
-    | Click stuff on screen |     |
-    ------------------------      |
-               ||                 |
-               \/                 |
-    ------------------------      |
-    | Use a DOM selector to |     |
-    | retrieve the content  |     |
-    |     of the element    |     |
-    ------------------------      |
-               ||                 |
-               \/                 |
-    ------------------------      |
-    |  Write assertions to  |     |
-    |   make sure content   |-----|
-    |       is correct      |
-    ------------------------
-*/
+  await page.setCookie({ name: 'session', value: sessionString });
+  await page.setCookie({ name: 'session.sig', value: sig });
+  await page.goto('localhost:3000');
+});
