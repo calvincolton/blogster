@@ -26,7 +26,7 @@ test('Clicking login starts the google oAuth flow.', async () => {
   expect(url).toMatch(/accounts\.google\.com/);
 });
 
-test('When a user is signed in, the logout button is displayed', async () => {
+test.only('When a user is signed in, the logout button is displayed', async () => {
   const userId = '5b81a886a2222003deb86cf0';  // user _id as defined in mlab users table
 
   const Buffer = require('safe-buffer').Buffer;
@@ -47,4 +47,9 @@ test('When a user is signed in, the logout button is displayed', async () => {
   await page.setCookie({ name: 'session', value: sessionString });
   await page.setCookie({ name: 'session.sig', value: sig });
   await page.goto('localhost:3000');
+  await page.waitFor('a[href="/auth/logout"]');
+
+  const text = await page.$eval('a[href="/auth/logout"]', el => el.innerHTML);
+
+  expect(text).toEqual('Logout');
 });
