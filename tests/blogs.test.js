@@ -23,7 +23,7 @@ describe('When user is logged in', async () => {
     expect(label).toEqual('Blog Title');
   });
 
-  describe('and using valid inputs', async () => {
+  describe('and user tries entering valid inputs', async () => {
     beforeEach(async () => {
       // page.type() accepts two arguments--a selector and the text we are entering
       await page.type('.title input', 'My Title');
@@ -52,7 +52,7 @@ describe('When user is logged in', async () => {
     });
   });
 
-  describe('and using invalid inputs', async () => {
+  describe('and user tries entering INVALID inputs', async () => {
     beforeEach(async () => {
       await page.click('form button');
     });
@@ -69,18 +69,48 @@ describe('When user is logged in', async () => {
 
 describe('When user is NOT logged in', async () => {
   test('user cannot create a blog post', async () => {
-    const result = await page.evaluate(() => {
-      return fetch('/api/blogs', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ title: 'My Attempted Hack', content: 'My Content' })
-      }).then(res => res.json());
-    });
+    const result = await page.get('/api/blogs');
 
-    // console.log(result);
+    expect(result).toEqual({ error: 'You must log in!' });
+  });
+
+  test('user cannot get a list of posts', async () => {
+    const result = await page.post('/api/blogs', { title: 'My Attempted Hack', content: 'My Content' });
+
     expect(result).toEqual({ error: 'You must log in!' });
   });
 });
+
+
+// the below tests were refactored into the above, adding
+// get() and post() class methods to CustomPage
+// describe('When user is NOT logged in', async () => {
+//   test('user cannot create a blog post', async () => {
+//     const result = await page.evaluate(() => {
+//       return fetch('/api/blogs', {
+//         method: 'POST',
+//         credentials: 'same-origin',
+//         headers: {
+//           'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({ title: 'My Attempted Hack', content: 'My Content' })
+//       }).then(res => res.json());
+//     });
+//
+//     expect(result).toEqual({ error: 'You must log in!' });
+//   });
+//
+//   test('user cannot get a list of posts', async () => {
+//     const result = await page.evaluate(() => {
+//       return fetch('/api/blogs', {
+//         method: 'GET',
+//         credentials: 'same-origin',
+//         headers: {
+//           'Content-Type': 'application/json'
+//         }
+//       }).then(res => res.json());
+//     });
+//
+//     expect(result).toEqual({ error: 'You must log in!' });
+//   });
+// });
