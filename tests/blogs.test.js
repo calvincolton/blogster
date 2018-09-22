@@ -4,7 +4,7 @@ let page;
 
 beforeEach(async () => {
   page = await Page.build();
-  await page.goto('localhost:3000');
+  await page.goto('http://localhost:3000');
 });
 
 afterEach(async () => {
@@ -80,37 +80,3 @@ describe('When user is NOT logged in', async () => {
     expect(result).toEqual({ error: 'You must log in!' });
   });
 });
-
-
-// the below tests were refactored into the above, adding
-// get() and post() class methods to CustomPage
-// describe('When user is NOT logged in', async () => {
-//   test('user cannot create a blog post', async () => {
-//     const result = await page.evaluate(() => {
-//       return fetch('/api/blogs', {
-//         method: 'POST',
-//         credentials: 'same-origin',
-//         headers: {
-//           'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({ title: 'My Attempted Hack', content: 'My Content' })
-//       }).then(res => res.json());
-//     });
-//
-//     expect(result).toEqual({ error: 'You must log in!' });
-//   });
-//
-//   test('user cannot get a list of posts', async () => {
-//     const result = await page.evaluate(() => {
-//       return fetch('/api/blogs', {
-//         method: 'GET',
-//         credentials: 'same-origin',
-//         headers: {
-//           'Content-Type': 'application/json'
-//         }
-//       }).then(res => res.json());
-//     });
-//
-//     expect(result).toEqual({ error: 'You must log in!' });
-//   });
-// });

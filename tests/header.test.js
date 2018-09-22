@@ -4,11 +4,14 @@ let page;
 
 beforeEach(async () => {
   page = await Page.build();
-  await page.goto('localhost:3000');
+  await page.goto('http://localhost:3000');
 });
 
 afterEach(async () => {
   await page.close();
+  const { todos } = mongoose.connection.collections;
+  await todos.drop();
+  await mongoose.disconnect();
 });
 
 test('The header contains the correct text (our brand name).', async () => {
