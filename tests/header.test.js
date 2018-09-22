@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const Page = require('./helpers/page');
 
 let page;
@@ -10,9 +9,6 @@ beforeEach(async () => {
 
 afterEach(async () => {
   await page.close();
-  const { todos } = mongoose.connection.collections;
-  await todos.drop();
-  await mongoose.disconnect();
 });
 
 test('The header contains the correct text (our brand name).', async () => {
