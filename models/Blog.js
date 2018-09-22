@@ -9,3 +9,5 @@ const blogSchema = new Schema({
 });
 
 mongoose.model('Blog', blogSchema);
+
+// consider adopting naming schema above e.g. capitalized models
