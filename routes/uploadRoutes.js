@@ -11,13 +11,17 @@ const s3 = new AWS.S3({
 module.exports = app => {
   app.get('/api/upload', requireLogin, (req, res) => {
     const key = `${req.user.id}/${uuid()}.jpeg`;
-    
-    s3.getSignedUrl('putObject', {
-      Bucket: 'blogster-sample-bucket',
-      ContentType: 'image/jpeg',
-      Key: key
-    }, (err, url) => {
-      res.send({ key, url });
-    });
+
+    s3.getSignedUrl(
+      'putObject',
+      {
+        Bucket: 'bucket-blogster-test',
+        ContentType: 'image/jpeg',
+        Key: key
+      },
+      (err, url) => {
+        res.send({ key, url });
+      }
+    );
   });
 };
