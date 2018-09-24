@@ -19,9 +19,7 @@ module.exports = app => {
         ContentType: 'image/jpeg',
         Key: key
       },
-      (err, url) => {
-        res.send({ key, url });
-      }
+      (err, url) => res.send({ key, url })
     );
   });
 };
